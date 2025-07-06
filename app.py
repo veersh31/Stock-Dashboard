@@ -2,25 +2,25 @@ import dash
 from dash import dcc, html, Input, Output
 import dash_bootstrap_components as dbc
 
-# Initialize the Dash app with a modern theme
+
 app = dash.Dash(__name__, 
                 external_stylesheets=[dbc.themes.FLATLY],
                 suppress_callback_exceptions=True)
 app.title = "Stock Analytics Dashboard"
-server = app.server  # For deployment
+server = app.server  
 
-# Import layouts
+
 from layouts.stock_dashboard import stock_dashboard_layout
 from layouts.portfolio import portfolio_optimizer_layout
 from layouts.ml_predictions import ml_predictions_layout
 
-# Import and register callbacks
+
 from callbacks import register_callbacks
 register_callbacks(app)
 
-# App Layout with Navigation
+
 app.layout = dbc.Container([
-    # Navbar with gradient background
+    
     dbc.Navbar(
         dbc.Container([
             html.A(
@@ -48,14 +48,14 @@ app.layout = dbc.Container([
         style={"background": "linear-gradient(90deg, #1e3c72 0%, #2a5298 100%)"}
     ),
 
-    # Location component for multi-page routing
+    
     dcc.Location(id='url', refresh=False),
 
-    # Page content will be dynamically loaded here
+    
     html.Div(id='page-content')
 ], fluid=True, className="px-4 py-3")
 
-# Navbar toggle callback
+
 @app.callback(
     Output("navbar-collapse", "is_open"),
     [Input("navbar-toggler", "n_clicks")],
@@ -66,7 +66,7 @@ def toggle_navbar_collapse(n, is_open):
         return not is_open
     return is_open
 
-# Routing Callback
+
 @app.callback(
     Output('page-content', 'children'),
     [Input('url', 'pathname')]
@@ -78,6 +78,6 @@ def display_page(pathname):
         return ml_predictions_layout()
     return stock_dashboard_layout()
 
-# Run the app
+
 if __name__ == '__main__':
     app.run_server(debug=True)
