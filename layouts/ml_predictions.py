@@ -39,12 +39,12 @@ def ml_predictions_layout():
         
         html.Div(id='ml-error-message', className="text-danger text-center fw-bold mb-3"),
         
-        # ML Tabs
+
         dbc.Tabs([
-            # Price Prediction Tab
+            
             dbc.Tab([
                 dbc.Row([
-                    # Prediction Card
+                    
                     dbc.Col([
                         dbc.Card([
                             dbc.CardHeader([
@@ -59,7 +59,7 @@ def ml_predictions_layout():
                         ], className="prediction-card shadow mb-4")
                     ], width=8),
                     
-                    # Model Info and Feature Importance
+                    
                     dbc.Col([
                         dbc.Card([
                             dbc.CardHeader([
@@ -79,7 +79,7 @@ def ml_predictions_layout():
                 ]),
             ], label="PRICE PREDICTION", tab_id="tab-prediction"),
             
-            # Trading Signals Tab
+            
             dbc.Tab([
                 dbc.Row([
                     dbc.Col([
