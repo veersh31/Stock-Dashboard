@@ -5,7 +5,7 @@ import numpy as np
 def get_stock_data(tickers, period='1y'):
     """Fetch stock data for one or more tickers."""
     try:
-        # If a single ticker is passed, convert to list
+        
         if isinstance(tickers, str):
             tickers = [tickers]
         
@@ -27,13 +27,13 @@ def get_stock_data(tickers, period='1y'):
 def get_dashboard_stock_data(ticker):
     """Fetch stock information and historical data for dashboard."""
     try:
-        # Fetch stock information
+        
         stock = yf.Ticker(ticker)
         
-        # Fetch historical data for 6 months
+        
         history = stock.history(period="6mo")
 
-        # Check if data is available
+        
         if history.empty:
             return None, None, "No historical data available for this ticker"
 
@@ -50,7 +50,7 @@ def get_full_stock_data(ticker, period='2y'):
         if df.empty:
             raise ValueError(f"No data found for {ticker}")
         
-        # Calculate technical indicators
+        
         # Moving Averages
         df['MA5'] = df['Close'].rolling(window=5).mean()
         df['MA20'] = df['Close'].rolling(window=20).mean()
@@ -89,7 +89,7 @@ def get_full_stock_data(ticker, period='2y'):
         # Volatility
         df['Volatility'] = df['Close'].rolling(window=20).std()
         
-        # Drop NaN values
+        
         df = df.dropna()
         
         return df
