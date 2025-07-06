@@ -26,7 +26,7 @@ def register_dashboard_callbacks(app):
         [State('stock-input', 'value')]
     )
     def update_stock_data(n_clicks, ticker):
-        # Validate input
+        
         if not ticker:
             return (["N/A"] * 8 + 
                     [
@@ -46,10 +46,10 @@ def register_dashboard_callbacks(app):
                         "Please enter a stock ticker."
                     ])
 
-        # Get stock data
+        
         stock, history, error = get_dashboard_stock_data(ticker)
 
-        # Handle errors
+        
         if error:
             return (["Error"] * 8 + 
                     [
@@ -69,11 +69,11 @@ def register_dashboard_callbacks(app):
                         f"Error: {error}"
                     ])
 
-        # Safely extract information with error handling
+        
         try:
             info = stock.info
             
-            # Extract metrics with safe fallback
+            
             latest_price = f"${history['Close'].iloc[-1]:,.2f}"
             market_cap = f"${info.get('marketCap', 'N/A'):,}" if info.get('marketCap') else "N/A"
             pe_ratio = f"{info.get('trailingPE', 'N/A'):.2f}" if info.get('trailingPE') else "N/A"
@@ -83,10 +83,10 @@ def register_dashboard_callbacks(app):
             low52 = f"${info.get('fiftyTwoWeekLow', 'N/A'):,}"
             eps = f"${info.get('trailingEps', 'N/A'):.2f}" if info.get('trailingEps') else "N/A"
 
-            # Create stock price chart with improved styling
+            
             fig_price = go.Figure()
             
-            # Add price line
+            
             fig_price.add_trace(go.Scatter(
                 x=history.index, 
                 y=history['Close'], 
@@ -100,7 +100,7 @@ def register_dashboard_callbacks(app):
                 fillcolor='rgba(41, 128, 185, 0.1)'
             ))
             
-            # Add moving averages
+            
             ma20 = history['Close'].rolling(window=20).mean()
             ma50 = history['Close'].rolling(window=50).mean()
             
@@ -128,7 +128,7 @@ def register_dashboard_callbacks(app):
                 )
             ))
             
-            # Update layout
+            
             fig_price.update_layout(
                 title={
                     'text': f"{ticker} Stock Price",
@@ -165,13 +165,13 @@ def register_dashboard_callbacks(app):
                 margin=dict(l=40, r=40, t=80, b=40)
             )
             
-            # Create volume trend chart with improved styling
+            
             fig_volume = go.Figure()
             
-            # Add volume bars with color based on price change
+            
             colors = ['#2ecc71' if history['Close'].iloc[i] > history['Close'].iloc[i-1] 
                      else '#e74c3c' for i in range(1, len(history))]
-            colors.insert(0, '#2ecc71')  # Add color for the first day
+            colors.insert(0, '#2ecc71')  
             
             fig_volume.add_trace(go.Bar(
                 x=history.index, 
@@ -183,7 +183,7 @@ def register_dashboard_callbacks(app):
                 name='Volume'
             ))
             
-            # Add volume moving average
+            
             vol_ma20 = history['Volume'].rolling(window=20).mean()
             fig_volume.add_trace(go.Scatter(
                 x=history.index, 
@@ -196,7 +196,7 @@ def register_dashboard_callbacks(app):
                 )
             ))
             
-            # Update layout
+            
             fig_volume.update_layout(
                 title={
                     'text': f"{ticker} Trading Volume",
@@ -233,10 +233,10 @@ def register_dashboard_callbacks(app):
                 margin=dict(l=40, r=40, t=80, b=40)
             )
 
-            # Fetch news with improved styling
+            
             news_articles = get_stock_news(ticker)
             
-            # If no news articles, provide a message
+            
             if not news_articles:
                 news_articles = [
                     dbc.Alert(
