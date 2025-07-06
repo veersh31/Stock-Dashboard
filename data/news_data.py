@@ -7,13 +7,12 @@ import os
 def get_stock_news(ticker):
     """Fetch news articles for a stock and analyze sentiment."""
     try:
-        # Get API key from environment variable or use placeholder
         api_key = os.environ.get('NEWS_API_KEY', '0f70464767b54f46aed5f709e3961908')
         
         url = f"https://newsapi.org/v2/everything?q={ticker}&apiKey={api_key}&pageSize=5"
         response = requests.get(url)
         
-        # Check if request was successful
+
         if response.status_code != 200:
             return []
 
@@ -42,7 +41,7 @@ def get_stock_news(ticker):
                     sentiment_class = "sentiment-neutral"
                     icon = html.I(className="fas fa-minus me-2")
                 
-                # Create news card
+                
                 news_articles.append(
                     dbc.Card([
                         dbc.CardHeader([
