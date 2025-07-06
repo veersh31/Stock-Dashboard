@@ -1,9 +1,9 @@
 def generate_trading_signals(df):
     """Generate trading signals based on technical indicators."""
-    # Create a copy to avoid modifying the original dataframe
+    
     signals_df = df.copy()
     
-    # Initialize signals column
+    
     signals_df['Signal'] = 0
     
     # MACD Signal
@@ -24,13 +24,13 @@ def generate_trading_signals(df):
     signals_df.loc[signals_df['MA5'] > signals_df['MA20'], 'MA_Signal'] = 1
     signals_df.loc[signals_df['MA5'] < signals_df['MA20'], 'MA_Signal'] = -1
     
-    # Combine signals (simple average)
+    
     signals_df['Signal'] = (signals_df['MACD_Signal'].fillna(0) + 
                            signals_df['RSI_Signal'].fillna(0) + 
                            signals_df['BB_Signal'].fillna(0) + 
                            signals_df['MA_Signal'].fillna(0)) / 4
     
-    # Classify signals
+    
     signals_df.loc[signals_df['Signal'] > 0.3, 'Signal_Class'] = 'Buy'
     signals_df.loc[signals_df['Signal'] < -0.3, 'Signal_Class'] = 'Sell'
     signals_df.loc[(signals_df['Signal'] >= -0.3) & (signals_df['Signal'] <= 0.3), 'Signal_Class'] = 'Hold'
@@ -39,13 +39,13 @@ def generate_trading_signals(df):
 
 def get_signal_statistics(signals_df):
     """Get statistics about trading signals."""
-    # Count signals
+    
     buy_count = len(signals_df[signals_df['Signal_Class'] == 'Buy'])
     sell_count = len(signals_df[signals_df['Signal_Class'] == 'Sell'])
     hold_count = len(signals_df[signals_df['Signal_Class'] == 'Hold'])
     total_signals = len(signals_df)
     
-    # Get last signal
+    
     last_signal = signals_df['Signal_Class'].iloc[-1]
     signal_strength = abs(signals_df['Signal'].iloc[-1])
     
