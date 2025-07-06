@@ -37,7 +37,7 @@ def register_portfolio_callbacks(app):
                 font=dict(size=14)
             )), "Invalid stock tickers or insufficient data. Please check your input."
 
-        # Construct Efficient Frontier Graph
+        
         df = get_stock_data(tickers)
         returns = df.pct_change().dropna()
         mean_returns = returns.mean()
@@ -52,7 +52,7 @@ def register_portfolio_callbacks(app):
             ret, risk = np.sum(rand_weights * mean_returns), np.sqrt(np.dot(rand_weights.T, np.dot(cov_matrix, rand_weights)))
             results[0, i] = risk
             results[1, i] = ret
-            results[2, i] = ret / risk  # Sharpe Ratio
+            results[2, i] = ret / risk  
 
         fig = go.Figure()
         fig.add_trace(go.Scatter(
@@ -116,7 +116,7 @@ def register_portfolio_callbacks(app):
             )
         )
 
-        # Create a card with optimal weights
+        
         weight_cards = []
         for i, ticker in enumerate(tickers):
             weight_percentage = weights[i] * 100
