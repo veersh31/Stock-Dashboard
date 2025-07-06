@@ -31,13 +31,13 @@ def register_ml_callbacks(app):
          State('prediction-days', 'value')]
     )
     def update_ml_predictions(n_clicks, ticker, prediction_days):
-        # Initialize empty outputs
+        
         empty_outputs = [
             html.Div(), go.Figure(), html.Div(), html.Div(), html.Div(),
             html.Div(), go.Figure(), html.Div(), html.Div(), go.Figure(), html.Div(), ""
         ]
         
-        # Validate input
+        
         if not ticker:
             empty_outputs[-1] = "Please enter a stock ticker."
             return empty_outputs
@@ -48,38 +48,38 @@ def register_ml_callbacks(app):
             prediction_days = 7
         
         try:
-            # Get full stock data for ML
+            
             df = get_full_stock_data(ticker)
             
             if df is None or df.empty:
                 empty_outputs[-1] = f"No data found for {ticker}"
                 return empty_outputs
             
-            # Prepare data for prediction
+            
             X_train, X_test, y_train, y_test, scaler_X, scaler_y, features = prepare_prediction_data(df, prediction_days)
             
-            # Train model
+            
             model = train_price_prediction_model(X_train, y_train)
             
-            # Make predictions
+            
             y_pred = model.predict(X_test)
             
-            # Calculate accuracy metrics
+            
             mse = mean_squared_error(y_test, y_pred)
             rmse = np.sqrt(mse)
             accuracy = 1 - rmse
             
-            # Get feature importance
+            
             feature_importance = model.feature_importances_
             
-            # Inverse transform predictions
+            
             y_test_inv = scaler_y.inverse_transform(y_test.reshape(-1, 1)).flatten()
             y_pred_inv = scaler_y.inverse_transform(y_pred.reshape(-1, 1)).flatten()
             
-            # Create prediction chart
+            
             fig_prediction = go.Figure()
             
-            # Add actual prices
+            
             fig_prediction.add_trace(go.Scatter(
                 x=df.index[-len(y_test):],
                 y=y_test_inv,
@@ -88,7 +88,7 @@ def register_ml_callbacks(app):
                 line=dict(color='#2980b9', width=2)
             ))
             
-            # Add predicted prices
+            
             fig_prediction.add_trace(go.Scatter(
                 x=df.index[-len(y_test):],
                 y=y_pred_inv,
@@ -97,16 +97,16 @@ def register_ml_callbacks(app):
                 line=dict(color='#e74c3c', width=2, dash='dash')
             ))
             
-            # Add future prediction
+            
             last_date = df.index[-1]
             future_dates = [last_date + datetime.timedelta(days=i) for i in range(1, prediction_days + 1)]
             
-            # Predict future price
+            
             future_pred, future_date, current_price, price_change = predict_future_price(
                 df, model, scaler_X, scaler_y, features, prediction_days
             )
             
-            # Add future prediction point
+            
             fig_prediction.add_trace(go.Scatter(
                 x=[future_dates[-1]],
                 y=[future_pred],
@@ -115,7 +115,7 @@ def register_ml_callbacks(app):
                 marker=dict(color='#27ae60', size=12, symbol='star')
             ))
             
-            # Update layout
+            
             fig_prediction.update_layout(
                 title={
                     'text': f"{ticker} Price Prediction",
@@ -151,7 +151,7 @@ def register_ml_callbacks(app):
                 )
             )
             
-            # Create prediction summary
+            
             price_direction = "up" if price_change > 0 else "down"
             prediction_summary = html.Div([
                 html.H3(f"Predicted Price in {prediction_days} Days:", className="mb-3"),
@@ -179,7 +179,7 @@ def register_ml_callbacks(app):
                 ])
             ])
             
-            # Create model accuracy display
+            
             model_accuracy = html.Div([
                 dbc.Progress(
                     value=accuracy * 100,
@@ -191,7 +191,7 @@ def register_ml_callbacks(app):
                 html.P(f"Model Accuracy: {accuracy * 100:.2f}%", className="text-center")
             ])
             
-            # Create model confidence
+            
             confidence_level = "High" if accuracy > 0.7 else "Medium" if accuracy > 0.5 else "Low"
             confidence_color = "success" if accuracy > 0.7 else "warning" if accuracy > 0.5 else "danger"
             
@@ -214,7 +214,7 @@ def register_ml_callbacks(app):
                 ], className="model-info-card")
             ])
             
-            # Create feature importance visualization
+            
             feature_importance_data = sorted(zip(features, feature_importance), key=lambda x: x[1], reverse=True)
             
             feature_bars = []
@@ -236,14 +236,14 @@ def register_ml_callbacks(app):
             
             feature_importance_viz = html.Div(feature_bars)
             
-            # Generate trading signals
+            
             signals_df = generate_trading_signals(df)
             signal_stats = get_signal_statistics(signals_df)
             
-            # Create trading signals chart
+            
             fig_signals = go.Figure()
             
-            # Add price line
+            
             fig_signals.add_trace(go.Scatter(
                 x=signals_df.index,
                 y=signals_df['Close'],
@@ -252,7 +252,7 @@ def register_ml_callbacks(app):
                 line=dict(color='#2980b9', width=2)
             ))
             
-            # Add buy signals
+            
             buy_signals = signals_df[signals_df['Signal_Class'] == 'Buy']
             fig_signals.add_trace(go.Scatter(
                 x=buy_signals.index,
@@ -266,7 +266,7 @@ def register_ml_callbacks(app):
                 )
             ))
             
-            # Add sell signals
+            
             sell_signals = signals_df[signals_df['Signal_Class'] == 'Sell']
             fig_signals.add_trace(go.Scatter(
                 x=sell_signals.index,
@@ -280,7 +280,7 @@ def register_ml_callbacks(app):
                 )
             ))
             
-            # Update layout
+            
             fig_signals.update_layout(
                 title={
                     'text': f"{ticker} Trading Signals",
@@ -316,7 +316,7 @@ def register_ml_callbacks(app):
                 )
             )
             
-            # Create trading signal summary
+            
             last_signal = signal_stats['last_signal']
             signal_strength = signal_stats['signal_strength']
             
@@ -350,7 +350,7 @@ def register_ml_callbacks(app):
                 ])
             ])
             
-            # Create signal details
+            
             signal_details_class = "signal-buy" if last_signal == 'Buy' else "signal-sell" if last_signal == 'Sell' else "signal-hold"
             
             signal_details = html.Div([
@@ -418,16 +418,15 @@ def register_ml_callbacks(app):
                 ])
             ])
             
-            # Analyze risk
+            
             risk_metrics = analyze_risk(df, ticker)
             
-            # Create risk chart
-            # Calculate daily returns for volatility visualization
+            
             returns = df['Close'].pct_change().dropna()
             
             fig_risk = go.Figure()
             
-            # Add histogram of returns
+            
             fig_risk.add_trace(go.Histogram(
                 x=returns,
                 nbinsx=50,
@@ -436,10 +435,10 @@ def register_ml_callbacks(app):
                 name='Daily Returns'
             ))
             
-            # Add normal distribution curve
+            
             x = np.linspace(min(returns), max(returns), 100)
             y = np.exp(-(x - returns.mean())**2 / (2 * returns.std()**2)) / (returns.std() * np.sqrt(2 * np.pi))
-            y = y * (len(returns) * (max(returns) - min(returns)) / 50)  # Scale to match histogram
+            y = y * (len(returns) * (max(returns) - min(returns)) / 50)  
             
             fig_risk.add_trace(go.Scatter(
                 x=x,
@@ -449,7 +448,7 @@ def register_ml_callbacks(app):
                 name='Normal Distribution'
             ))
             
-            # Add VaR line
+            
             fig_risk.add_vline(
                 x=risk_metrics['var_95'],
                 line_dash="dash",
@@ -458,7 +457,7 @@ def register_ml_callbacks(app):
                 annotation_position="top right"
             )
             
-            # Update layout
+            
             fig_risk.update_layout(
                 title={
                     'text': f"{ticker} Risk Profile",
@@ -494,7 +493,7 @@ def register_ml_callbacks(app):
                 )
             )
             
-            # Create risk summary
+            
             risk_summary = html.Div([
                 html.H3("Risk Assessment:", className="mb-3"),
                 html.Div([
@@ -521,7 +520,7 @@ def register_ml_callbacks(app):
                 ], className="mb-2")
             ])
             
-            # Create risk metrics details
+            
             risk_metrics_details = html.Div([
                 html.Div([
                     html.H5("VOLATILITY", className="mb-2"),
@@ -593,7 +592,7 @@ def register_ml_callbacks(app):
                         className="text-muted small"
                     ),
                     dbc.Progress(
-                        value=min(risk_metrics['sharpe_ratio']*50, 100),  # Scale for better visualization
+                        value=min(risk_metrics['sharpe_ratio']*50, 100),  
                         color="success",
                         className="mb-4"
                     )
